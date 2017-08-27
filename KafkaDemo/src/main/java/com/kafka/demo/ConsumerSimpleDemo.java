@@ -30,17 +30,28 @@ public class ConsumerSimpleDemo extends Thread {
 	// 配置相关信息
 	private static ConsumerConfig createConsumerConfig() {
 		Properties props = new Properties();
+		/*
+		 *  zookeeper.connect=127.0.0.1:12181  
+			group.id=lst  
+			zookeeper.session.timeout.ms=4000  
+			zookeeper.sync.time.ms=200  
+			auto.commit.interval.ms=1000  
+			auto.offset.reset=smallest  
+			serializer.class=kafka.serializer.StringEncoder 
+		 */
 		// props.put("zookeeper.connect","localhost:2181,10.XX.XX.XX:2181,10.XX.XX.XX:2181");
 		// 配置要连接的zookeeper地址与端口
-		props.put("zookeeper.connect", "127.0.0.1:2181");
+		props.put("zookeeper.connect", "127.0.0.1:12181");
 		// 配置zookeeper的组id
 		props.put("group.id", "group-1");
 		// 配置zookeeper连接超时间隔
-		props.put("zookeeper.session.timeout.ms", "10000");
+		props.put("zookeeper.session.timeout.ms", "4000");
 		// 配置zookeeper异步执行时间
 		props.put("zookeeper.sync.time.ms", "200");
 		// 配置自动提交时间间隔
 		props.put("auto.commit.interval.ms", "1000");
+		props.put("auto.offset.reset", "smallest");
+		props.put("serializer.class", "kafka.serializer.StringEncoder ");
 		return new ConsumerConfig(props);
 	}
 

@@ -10,6 +10,7 @@ import java.util.concurrent.TimeUnit;
 
 import kafka.consumer.Consumer;
 import kafka.consumer.ConsumerConfig;
+import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 
@@ -22,7 +23,7 @@ public class ConsumerDemo {
 	private ExecutorService executor;
 
 	public ConsumerDemo(String a_zookeeper, String a_groupId, String a_topic) {
-		consumer = Consumer.createJavaConsumerConnector(createConsumerConfig(a_zookeeper,a_groupId));
+		this.consumer = kafka.consumer.Consumer.createJavaConsumerConnector(createConsumerConfig(a_zookeeper,a_groupId));
 		this.topic = a_topic;
 	}
 
@@ -46,6 +47,22 @@ public class ConsumerDemo {
 		topicCountMap.put(topic, new Integer(numThreads));
 		Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = consumer
 				.createMessageStreams(topicCountMap);
+		
+		/*KafkaStream<byte[], byte[]> stream2 = consumerMap.get(topic).get(0);
+		ConsumerIterator<byte[], byte[]> it = stream2.iterator();
+		System.out.println("*********Results********");
+		while (true) {
+			if (it.hasNext()) {
+				// 打印得到的消息
+				System.err.println(Thread.currentThread() + " get data:" + new String(it.next().message()));
+			}
+			try {
+				Thread.sleep(1000);
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}*/
+		
 		List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(topic);
 		System.err.println("-----Need to consume content----"+streams);
 
@@ -68,14 +85,16 @@ public class ConsumerDemo {
 		// http://kafka.apache.org/documentation.html#consumerconfigs
 		props.put("zookeeper.connect", a_zookeeper); //配置ZK地址
 		props.put("group.id", a_groupId); //必填字段
-		props.put("zookeeper.session.timeout.ms", "400");
+		props.put("zookeeper.session.timeout.ms", "4000");
 		props.put("zookeeper.sync.time.ms", "200");
 		props.put("auto.commit.interval.ms", "1000");
+		props.put("auto.offset.reset", "smallest");
+		props.put("serializer.class", "kafka.serializer.StringEncoder ");
 		return new ConsumerConfig(props);
 	}
 
 	public static void main(String[] arg) {
-		String[] args = { "127.0.0.1:2181", "group-1", "page_visits", "10" };
+		String[] args = { "127.0.0.1:12181", "tom2", "page_visits", "1" };
 		String zooKeeper = args[0];
 		String groupId = args[1];
 		String topic = args[2];
@@ -85,7 +104,7 @@ public class ConsumerDemo {
 		demo.run(threads);
 
 		try {
-			Thread.sleep(10000);
+			Thread.sleep(100000);
 		} catch (InterruptedException ie) {
 
 		}

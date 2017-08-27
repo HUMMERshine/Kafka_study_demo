@@ -39,7 +39,7 @@ public class ProducerDemo {
 		long start = System.currentTimeMillis();
 		for (long i = 0; i < events; i++) {
 			long runtime = new Date().getTime();
-			String ip = "192.168.1." + i;
+			String ip = "127.0.0." + i;
 			String msg = runtime + "--www.kafkademo.com--" + ip;
 			// 如果topic不存在，则会自动创建，默认replication-factor为1，partitions为0
 			KeyedMessage<String, String> data = new KeyedMessage<String, String>("page_visits", ip, msg);
